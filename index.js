@@ -12,6 +12,7 @@ require('dotenv').config();
     const browser = await puppeteer.launch({headless: true});
     const page = await browser.newPage();
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36');
+	await page.setViewport({ width: 800, height: 1400 })
 	await page.goto(link + '/', { waitUntil: 'networkidle2' });
 	console.log(`Scraping ${link}`)
 
@@ -22,6 +23,16 @@ require('dotenv').config();
 			console.log('No credentials available in .env file\n')
 			return await browser.close();
 		}
+
+		const loginFormLoaded = await page.evaluate(() => {
+			if (document.querySelector('#loginForm input[name="username"]')) { return true }
+		})
+
+		if (!loginFormLoaded) {
+			console.log('Instagram login form not loading. Try again later')
+			return await browser.close()
+		}
+
 		// Login to Instagram using credentials in .env file
 		await page.type('#loginForm input[name="username"]', process.env.INSTAGRAM_LOGIN, { delay: 50 })
 		await page.type('#loginForm input[name="password"]', process.env.INSTAGRAM_PW, { delay: 50 })
@@ -35,6 +46,8 @@ require('dotenv').config();
 		if (await page.url() == "https://www.instagram.com/accounts/login/") {
 			console.log('Failed logging in to Instagram\n')
 			return await browser.close()
+		} else {
+			console.log('Successfully logged in')
 		}
 
 		try {
@@ -47,7 +60,7 @@ require('dotenv').config();
 
 	try {
 		await page.waitForSelector('.fx7hk', {timeout: 5000})
-		console.log('Successfully found profile')
+		console.log('Found Instagram profile')
 	} catch (error) {
 		let isUsernameNotFound = await page.evaluate(() => {
 			if(document.getElementsByTagName('h2')[0]) {
@@ -66,7 +79,7 @@ require('dotenv').config();
 		}
 	}
 	
-	await page.waitForTimeout(1500)
+	await page.waitForTimeout(1000)
 	
 	// Click on reels tab
 	await page.evaluate(() => {
@@ -77,7 +90,7 @@ require('dotenv').config();
 	await page.waitForSelector('._2z6nI')
 
 	// Scroll to load more reels
-	console.log('Scrolling down reels page')
+	console.log('Scrolling down reels page...\n')
 	await page.evaluate(() => new Promise((resolve) => {
         var scrollTop = -1;
         const interval = setInterval(() => {
@@ -88,8 +101,11 @@ require('dotenv').config();
 			}
 			clearInterval(interval);
 			resolve();
-        }, 300);
+        }, 200);
 	}));
+	await page.setViewport({ width: 800, height: 6000 })
+	await page.evaluate(() => window.scrollTo(0,500))
+	await page.waitForTimeout(1000)
 
 	// Selectors for desired data (url of reel, views, likes, and comments)
 	const reelLink = 'div._2z6nI > div a'
@@ -111,10 +127,9 @@ require('dotenv').config();
 	commentsArray = ["1,366", "2,452", "559"]
 	*/
 
-	console.log('\n Links: ' + reelArray)
-	console.log('\nViews: ' + viewsArray)
-	console.log('\nLikes: ' + likesArray)
-	console.log('\nComments: ' + commentsArray + '\n')
+	for (i=0; i<reelArray.length; i++) {
+		console.log('Reel ' + (i+1) + ': ' + viewsArray[i] + ' views, ' + likesArray[i] + ' likes, ' + commentsArray[i] + ' comments')
+	}
 
 	// Call generateCSV function from csv.js where it creates out.csv with all data
 	csv.generateCSV(link, reelArray, viewsArray, likesArray, commentsArray);
