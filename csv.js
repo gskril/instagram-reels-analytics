@@ -1,6 +1,6 @@
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
-function generateCSV(reelArray, viewsArray, likesArray, commentsArray) {
+function generateCSV(link, reelArray, viewsArray, likesArray, commentsArray) {
 	const csvWriter = createCsvWriter({
 		path: 'out.csv',
 		header: [
@@ -15,7 +15,7 @@ function generateCSV(reelArray, viewsArray, likesArray, commentsArray) {
 
 	for (let i = 0; i < reelArray.length; i++) {
 		data.push( {
-			link: reelArray[i],
+			link: link + reelArray[i],
 			views: viewsArray[i],
 			likes: likesArray[i],
 			comments: commentsArray[i]

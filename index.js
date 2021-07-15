@@ -1,36 +1,54 @@
-/* --------------------
-
-Try extra stealth plugin:
-https://www.npmjs.com/package/puppeteer-extra-plugin-stealth
-
-And/or add fallback login to sign into spam account if Instagram redirects to login page
-process.env.INSTAGRAM_LOGIN
-process.env.INSTAGRAM_PW
-
--------------------- */
-
 const puppeteer = require("puppeteer");
 const csv = require('./csv');
-require('dotenv').config()
+require('dotenv').config();
 
 (async () => {
 	if (process.argv[2]) {
-		var link = "https://www.instagram.com/" + process.argv[2] + "/"
+		var link = "https://www.instagram.com/" + process.argv[2]
 	} else {
-		console.log('You must enter an Instagram username')
+		console.log("Enter an Instagram username after the start command")
 		process.exit()
 	}
     const browser = await puppeteer.launch({headless: true});
     const page = await browser.newPage();
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36');
-	await page.setViewport({ width: 950, height: 950 })
-	await page.goto(link, { waitUntil: 'networkidle2' });
+	await page.goto(link + '/', { waitUntil: 'networkidle2' });
 	console.log(`Scraping ${link}`)
+
+	// Check if Instagram redirects to login page
+	if (await page.url() == "https://www.instagram.com/accounts/login/") {
+		console.log('Instagram redirected to Login page')
+		if (!process.env.INSTAGRAM_LOGIN || !process.env.INSTAGRAM_PW) {
+			console.log('No credentials available in .env file\n')
+			return await browser.close();
+		}
+		// Login to Instagram using credentials in .env file
+		await page.type('#loginForm input[name="username"]', process.env.INSTAGRAM_LOGIN, { delay: 50 })
+		await page.type('#loginForm input[name="password"]', process.env.INSTAGRAM_PW, { delay: 50 })
+		await page.click('button[type="submit"]', { delay: 500 })
+		
+		// Wait for successful login then go to specified profile
+		await page.waitForTimeout(3000);
+		await page.waitForSelector('#react-root');
+
+		// Check if browser is still on login page, meaning a failed login
+		if (await page.url() == "https://www.instagram.com/accounts/login/") {
+			console.log('Failed logging in to Instagram\n')
+			return await browser.close()
+		}
+
+		try {
+			await page.goto(link + '/', { waitUntil: 'networkidle2' });
+		} catch (error) {
+			console.log('Unable to visit profile after attempted login\n')
+			return await browser.close()
+		}
+	}
 
 	try {
 		await page.waitForSelector('.fx7hk', {timeout: 5000})
+		console.log('Successfully found profile')
 	} catch (error) {
-
 		let isUsernameNotFound = await page.evaluate(() => {
 			if(document.getElementsByTagName('h2')[0]) {
 				if(document.getElementsByTagName('h2')[0].textContent == "Sorry, this page isn't available.") {
@@ -58,31 +76,48 @@ require('dotenv').config()
 	await page.waitForTimeout(1000)
 	await page.waitForSelector('._2z6nI')
 
+	// Scroll to load more reels
+	console.log('Scrolling down reels page')
+	await page.evaluate(() => new Promise((resolve) => {
+        var scrollTop = -1;
+        const interval = setInterval(() => {
+			window.scrollBy(0, 100);
+			if (document.documentElement.scrollTop !== scrollTop) {
+				scrollTop = document.documentElement.scrollTop;
+				return;
+			}
+			clearInterval(interval);
+			resolve();
+        }, 300);
+	}));
+
+	// Selectors for desired data (url of reel, views, likes, and comments)
 	const reelLink = 'div._2z6nI > div a'
 	const viewsCount = 'div.T1pqg > div > div > div > div._7UhW9.vy6Bb.qyrsm.h_zdq.uL8Hv > span'
-	const likesCount = 'div.T1pqg div.vrLJa > div > ul > li:nth-child(1) > span:nth-child(1)'
-	const commentsCount = 'div.T1pqg div.vrLJa > div > ul > li:nth-child(2) > span:nth-child(1)'
+	const likesCount = 'div.vrLJa > div > ul > li:nth-child(1) > span:nth-child(1)'
+	const commentsCount = 'div.vrLJa > div > ul > li:nth-child(2) > span:nth-child(1)'
 	
+	// Create an array using querySelectorAll for each data point
 	const reelArray = await page.$$eval(reelLink, el => el.map(x => x.getAttribute("href")));
 	const viewsArray = await page.$$eval(viewsCount, (options) => options.map((option) => option.textContent));
 	const likesArray = await page.$$eval(likesCount, (options) => options.map((option) => option.textContent));
 	const commentsArray = await page.$$eval(commentsCount, (options) => options.map((option) => option.textContent));
 
-	console.log('Links: ' + reelArray)
-	console.log('\n\nViews: ' + viewsArray)
-	console.log('\n\nLikes: ' + likesArray)
-	console.log('\n\nComments: ' + commentsArray)
-
 	/* 
-	// SAMPLE DATA
-	const reelArray = ["link1", "link2", "link3", "link4", "link5"]
-	const viewsArray = ["1000", "2000", "3000", "4000", "5000"]
-	const likesArray = ["100", "200", "300", "400", "500"]
-	const commentsArray = ["1", "2", "3", "4", "5"]
+	SAMPLE DATA: 
+	reelArray = ["/reel/CRCi1qIhBei/", "/reel/CRB3cuABeF9/", "/reel/CRA2BEZhdQR/"]
+	viewsArray = ["4m", "4.7m", "3.5m"]
+	likesArray = ["267k", "699k", "148k"]
+	commentsArray = ["1,366", "2,452", "559"]
 	*/
 
+	console.log('\n Links: ' + reelArray)
+	console.log('\nViews: ' + viewsArray)
+	console.log('\nLikes: ' + likesArray)
+	console.log('\nComments: ' + commentsArray + '\n')
+
 	// Call generateCSV function from csv.js where it creates out.csv with all data
-	csv.generateCSV(reelArray, viewsArray, likesArray, commentsArray);
+	csv.generateCSV(link, reelArray, viewsArray, likesArray, commentsArray);
 
 	await browser.close();
 })();
