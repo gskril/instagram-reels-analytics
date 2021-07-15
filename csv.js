@@ -1,8 +1,8 @@
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
-function generateCSV(link, reelArray, viewsArray, likesArray, commentsArray) {
+function generateCSV(res, link, reelArray, viewsArray, likesArray, commentsArray) {
 	const csvWriter = createCsvWriter({
-		path: 'out.csv',
+		path: 'public/out.csv',
 		header: [
 			{id: 'link', title: 'Link'},
 			{id: 'views', title: 'Views'},
@@ -25,6 +25,8 @@ function generateCSV(link, reelArray, viewsArray, likesArray, commentsArray) {
 	csvWriter
 		.writeRecords(data)
 		.then(()=> console.log('\nThe CSV file was written successfully with ' + reelArray.length + ' records'));
+
+	res.redirect('/download')
 }
 
 module.exports = { generateCSV }
