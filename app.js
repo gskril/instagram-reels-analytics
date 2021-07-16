@@ -32,6 +32,9 @@ const scrape = async (username, res) => {
 		console.log('Instagram redirected to Login page')
 		if (!process.env.INSTAGRAM_LOGIN || !process.env.INSTAGRAM_PW) {
 			console.log('No credentials available in .env file\n')
+			res.render('pages/index', {
+				errorMsg: "Config vars not yet"
+			})
 			return await browser.close();
 		}
 
@@ -59,7 +62,10 @@ const scrape = async (username, res) => {
 		// Check if browser is still on login page, meaning a failed login
 		if (await page.url() == "https://www.instagram.com/accounts/login/") {
 			console.log('Failed logging in to Instagram\n')
-			return await browser.close()
+			res.render('pages/index', {
+				errorMsg: "Failed logging in to Instagram"
+			})
+			return await browser.close();
 		} else {
 			console.log('Successfully logged in')
 		}
