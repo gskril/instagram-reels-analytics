@@ -35,7 +35,7 @@ const scrape = async (username, res) => {
 			res.render('pages/index', {
 				errorMsg: "Config vars not yet"
 			})
-			return await browser.close();
+			return
 		}
 
 		const loginFormLoaded = await page.evaluate(() => {
@@ -47,7 +47,7 @@ const scrape = async (username, res) => {
 			res.render('pages/index', {
 				errorMsg: "Instagram login form not loading. Try again later"
 			})
-			return await browser.close()
+			return
 		}
 
 		// Login to Instagram using credentials in .env file
@@ -65,7 +65,7 @@ const scrape = async (username, res) => {
 			res.render('pages/index', {
 				errorMsg: "Failed logging in to Instagram"
 			})
-			return await browser.close();
+			return
 		} else {
 			console.log('Successfully logged in')
 		}
@@ -98,13 +98,13 @@ const scrape = async (username, res) => {
 			res.render('pages/index', {
 				errorMsg: "Account does not exist."
 			})
-			return await browser.close();
+			return
 		} else {
 			console.log('Couldn\'t load Instagram before 5s timeout\n')
 			res.render('pages/index', {
 				errorMsg: "Error. Try again later"
 			})
-			return await browser.close();
+			return
 		}
 	}
 	
@@ -163,7 +163,7 @@ const scrape = async (username, res) => {
 	// Call generateCSV function from csv.js where it creates out.csv with all data
 	csv.generateCSV(res, link, reelArray, viewsArray, likesArray, commentsArray);
 
-	await browser.close();
+	// await browser.close();
 };
 
 module.exports = { scrape }

@@ -5,6 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Instagram Reels Analytics</title>
+	<script src="/jquery-3.1.0.min.js"></script>
 </head>
 <body>
 	<h1>Instagram Reels Analytics</h1>
@@ -14,8 +15,25 @@
 		<button type="submit">Submit</button>
 	</form>
 
-	<% if (errorMsg) { %>
-		<p style="color: red;"><%- errorMsg -%></p>
-	<% } %>
+	<p style="color: red;"><%- errorMsg -%></p>
+
+	<script>
+		$(document).ready(function(){
+			$("form").on('submit', function(e){
+				e.preventDefault();
+				$.ajax({
+					type: 'POST',
+					url: $(this).attr('action'),
+					data: $(this).serialize(),
+					success: function(data) {
+						document.write(data)
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown) {
+						console.log("failed");
+					}
+				})
+			});
+		});
+	</script>
 </body>
 </html>
