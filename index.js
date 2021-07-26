@@ -19,10 +19,6 @@ app.get('/', async (req, res) => {
 	})
 })
 
-app.get('/scraper', async (req, res) => {
-	res.redirect('/')
-})
-
 app.post('/scraper', async (req, res) => {
 	scrape.scrape(req.body.username, res)
 })
