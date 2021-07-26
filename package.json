@@ -1,9 +1,13 @@
 {
   "name": "ig-reels-analytics",
+  "version": "1.0.0",
   "description": "Generate a CSV report of the views, likes, and comments of Instagram Reels on a specific profile",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
   },
   "author": "Greg Skriloff",
   "license": "ISC",
@@ -16,9 +20,13 @@
     "puppeteer": "^10.1.0"
   },
   "engines": {
-    "node": "12.x"
+    "node": "14.x"
   },
   "devDependencies": {
-    "electron": "^13.1.7"
+    "electron": "^13.1.7",
+    "electron-builder": "^22.11.7"
+  },
+  "build": {
+    "appId": "com.gskril.analytics"
   }
 }
