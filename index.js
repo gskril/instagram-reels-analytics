@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
-const port = process.env.PORT || 3080
+const main = require('./main')
+const port = main.getAvailPort
 const scrape = require('./app')
 
 app.use(express.static('public'))

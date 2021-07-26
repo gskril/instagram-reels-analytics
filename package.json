@@ -1,9 +1,9 @@
 {
   "name": "ig-reels-analytics",
   "description": "Generate a CSV report of the views, likes, and comments of Instagram Reels on a specific profile",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "start": "node index"
+    "start": "electron ."
   },
   "author": "Greg Skriloff",
   "license": "ISC",
@@ -12,9 +12,13 @@
     "dotenv": "^10.0.0",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
+    "get-port": "^5.1.1",
     "puppeteer": "^10.1.0"
   },
   "engines": {
     "node": "12.x"
+  },
+  "devDependencies": {
+    "electron": "^13.1.7"
   }
 }
