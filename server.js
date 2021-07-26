@@ -24,10 +24,5 @@ app.post('/scraper', async (req, res) => {
 })
 
 app.get('/download', function(req, res){
-    const html = `
-    
-        <a href="./out.csv">Download report</a>
-
-    `
-    res.send(html)
+    res.render('pages/result')
 })

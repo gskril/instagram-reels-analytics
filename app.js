@@ -160,7 +160,7 @@ const scrape = async (username, res) => {
 		console.log('Reel ' + (i+1) + ': ' + viewsArray[i] + ' views, ' + likesArray[i] + ' likes, ' + commentsArray[i] + ' comments')
 	}
 
-	// Call generateCSV function from csv.js where it creates out.csv with all data
+	// Call generateCSV function from csv.js where it creates report.csv with all data
 	csv.generateCSV(res, link, reelArray, viewsArray, likesArray, commentsArray);
 
 	await browser.close();

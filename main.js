@@ -17,7 +17,6 @@ function createWindow() {
     maximizable: false,
     webPreferences: {
       nodeIntegration: true,
-      devTools: false,
     },
   })
 
@@ -30,7 +29,7 @@ function createWindow() {
   // Set electron app view to randomized port and export to electron server
   getAvailPort().then(function (result) {
     exports.getAvailPort = result
-    require('./index')
+    require('./server')
 
     mainWindow.loadURL(`http://localhost:${result}/`)
   })
