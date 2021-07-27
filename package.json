@@ -1,5 +1,6 @@
 {
   "name": "ig-reels-analytics",
+  "productName": "Reels Analytics",
   "version": "1.0.0",
   "description": "Generate a CSV report of the views, likes, and comments of Instagram Reels on a specific profile",
   "main": "main.js",
