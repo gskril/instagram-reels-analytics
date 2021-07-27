@@ -5,17 +5,31 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Instagram Reels Analytics</title>
+	<link rel="stylesheet" href="/style.css">
 </head>
 <body>
 	<h1>Instagram Reels Analytics</h1>
 	<form action="/scraper" method="POST">
 		<label for="username">Instagram handle</label>
-		<input type="text" id="username" name="username">
-		<button type="submit">Submit</button>
+		<input type="text" id="username" name="username" autofocus>
+		<button type="submit">Generate Report</button>
 	</form>
 
-	<% if (errorMsg) { %>
-		<p style="color: red;"><%- errorMsg -%></p>
-	<% } %>
+	<p style="color: red;"><%- errorMsg -%></p>
+
+	<img src="/img/loader.gif" alt="Loader" width="32" height="32" style="display: none;">
+
+	<script>
+		document.querySelector('form').addEventListener('submit', (event) => {
+			if (document.querySelector('input[name="username"]').value == "") {
+				event.preventDefault()
+				document.querySelector('p').innerHTML = "Enter an Instagram handle"
+				return;
+			} else {
+				document.querySelector('img').style.display = "block"
+				document.querySelector('p').style.display = "none"
+			}
+		})
+	</script>
 </body>
 </html>
