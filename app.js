@@ -94,9 +94,15 @@ const scrape = async (username, res) => {
 		});
 	
 		if(isUsernameNotFound) {
-			console.log('Account does not exist.\n');
+			console.log('Account does not exist\n');
 			res.render('pages/index', {
-				errorMsg: "Account does not exist."
+				errorMsg: "Account does not exist"
+			})
+			return await browser.close();
+		} else if (await page.$eval('h2.rkEop', el => el.textContent) == "This Account is Private") {
+			console.log('Account is private\n');
+			res.render('pages/index', {
+				errorMsg: "Account is private"
 			})
 			return await browser.close();
 		} else {
