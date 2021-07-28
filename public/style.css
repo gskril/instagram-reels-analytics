@@ -41,6 +41,7 @@ button, .btn {
 	padding: .5rem 2rem;
 	transition: all .15s ease-in-out;
 	text-decoration: none;
+	width: max-content;
 }
 
 button:hover, button:focus, .btn:hover, .btn:focus {

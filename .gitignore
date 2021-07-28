@@ -1,5 +1,6 @@
 node_modules/
 dist/
+packaged/
 .DS_Store
 .env
 report.csv

@@ -20,14 +20,21 @@
 	<img src="/img/loader.gif" alt="Loader" width="32" height="32" style="display: none;">
 
 	<script>
+
+		const usernameInput = document.querySelector('input[name="username"]')
+
 		document.querySelector('form').addEventListener('submit', (event) => {
-			if (document.querySelector('input[name="username"]').value == "") {
+			if (usernameInput.value == "") {
 				event.preventDefault()
 				document.querySelector('p').innerHTML = "Enter an Instagram handle"
 				return;
 			} else {
 				document.querySelector('img').style.display = "block"
 				document.querySelector('p').style.display = "none"
+				setTimeout(() => {
+					usernameInput.setAttribute('disabled', '')
+					document.querySelector('button[type="submit"').setAttribute('disabled', '')
+				}, 50);
 			}
 		})
 	</script>
