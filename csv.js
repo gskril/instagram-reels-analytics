@@ -24,7 +24,7 @@ function generateCSV(link, reelArray, viewsArray, likesArray, commentsArray) {
 
 	csvWriter
 		.writeRecords(data)
-		.then(()=> console.log('\nThe CSV file was written successfully with ' + reelArray.length + ' records'));
+		.then(()=> console.log('\nThe CSV file was written successfully with ' + reelArray.length + ' records.'));
 }
 
 module.exports = { generateCSV }

@@ -20,7 +20,7 @@ require('dotenv').config();
 	if (await page.url() == "https://www.instagram.com/accounts/login/") {
 		console.log('Instagram redirected to Login page')
 		if (!process.env.INSTAGRAM_LOGIN || !process.env.INSTAGRAM_PW) {
-			console.log('No credentials available in .env file\n')
+			console.log('No credentials available in .env file.\n')
 			return await browser.close();
 		}
 
@@ -29,7 +29,7 @@ require('dotenv').config();
 		})
 
 		if (!loginFormLoaded) {
-			console.log('Instagram login form not loading. Try again later')
+			console.log('Instagram login form not loading. Try again later.')
 			return await browser.close()
 		}
 
@@ -44,7 +44,7 @@ require('dotenv').config();
 
 		// Check if browser is still on login page, meaning a failed login
 		if (await page.url() == "https://www.instagram.com/accounts/login/") {
-			console.log('Failed logging in to Instagram\n')
+			console.log('Failed logging in to Instagram.\n')
 			return await browser.close()
 		} else {
 			console.log('Successfully logged in')
@@ -53,7 +53,7 @@ require('dotenv').config();
 		try {
 			await page.goto(link + '/', { waitUntil: 'networkidle2' });
 		} catch (error) {
-			console.log('Unable to visit profile after attempted login\n')
+			console.log('Unable to visit profile after attempted login.\n')
 			return await browser.close()
 		}
 	}
@@ -73,8 +73,12 @@ require('dotenv').config();
 		if(isUsernameNotFound) {
 			console.log('Account does not exist.\n');
 			return await browser.close();
+		}
+		else if (await page.$eval('h2.rkEop', el => el.textContent) == "This Account is Private") {
+			console.log('Account is private.\n');
+			return await browser.close();
 		} else {
-			console.log('Couldn\'t load Instagram before 5s timeout\n')
+			console.log('Couldn\'t load Instagram before 5s timeout.\n')
 			return await browser.close();
 		}
 	}
