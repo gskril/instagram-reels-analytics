@@ -11,6 +11,9 @@
   "dependencies": {
     "csv-writer": "^1.6.0",
     "dotenv": "^10.0.0",
-    "puppeteer": "^10.1.0"
+    "puppeteer": "24.43.1"
+  },
+  "engines": {
+    "node": ">=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1 <27"
   }
 }

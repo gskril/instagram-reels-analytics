@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer");
+const { setTimeout: sleep } = require("node:timers/promises");
 const csv = require('./csv');
 require('dotenv').config();
 
@@ -39,7 +40,7 @@ require('dotenv').config();
 		await page.click('button[type="submit"]', { delay: 500 })
 		
 		// Wait for successful login then go to specified profile
-		await page.waitForTimeout(3000);
+		await sleep(3000);
 		await page.waitForSelector('#react-root');
 
 		// Check if browser is still on login page, meaning a failed login
@@ -83,14 +84,14 @@ require('dotenv').config();
 		}
 	}
 	
-	await page.waitForTimeout(1000)
+	await sleep(1000)
 	
 	// Click on reels tab
 	await page.evaluate(() => {
 		document.querySelectorAll('a._9VEo1')[1].click()
 	})
 	
-	await page.waitForTimeout(1000)
+	await sleep(1000)
 	await page.waitForSelector('._2z6nI')
 
 	// Scroll to load more reels
@@ -109,7 +110,7 @@ require('dotenv').config();
 	}));
 	await page.setViewport({ width: 800, height: 6000 })
 	await page.evaluate(() => window.scrollTo(0,500))
-	await page.waitForTimeout(1000)
+	await sleep(1000)
 
 	// Selectors for desired data (url of reel, views, likes, and comments)
 	const reelLink = 'div._2z6nI > div a'
